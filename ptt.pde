@@ -9,7 +9,6 @@ void setup() {
   sz = 40;
   csz = 20;
   map = new boolean[sz][sz];
-  map[10][15]=map[11][15]=map[10][16]=true;
 }
 int lmx, lmy;
 boolean pmousePressed;
