@@ -1,4 +1,4 @@
-# implementation of a cellular automaton i found
+# implementation of some random cellular automaton
 
 ## keyboard things:
 
