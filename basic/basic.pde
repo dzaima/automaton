@@ -86,6 +86,7 @@ void draw() {
   pmousePressed = mousePressed;
 }
 boolean override;
+int stepc;
 void keyPressed(KeyEvent e) {
   if (key == 'h') {
     highlight^= true;
@@ -98,6 +99,7 @@ void keyPressed(KeyEvent e) {
   }
   // playback
   if (key == 's') {
+    println(stepc++); // 575 1362 2149
     running = false;
     undo = map;
     map = step(map, false);
