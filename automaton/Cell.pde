@@ -425,10 +425,20 @@ static class Cell {
         }
       } else {
         for (int y = 0; y < 32; y++) {
-          if (data[y] != 0) {
+          if (data[y]!=0  ||  syS<=sy+y && eyS>=sy+y) {
             int d = data[y];
             for (int x = 0; x < 32; x++) {
-              if ((d&setMask[x]) != 0) g.rect((float)(zzx + (mx+x)*zm), (float)(zzy + (my+y)*zm), sz, sz);
+              if (sx+x >= sxS && sy+y >= syS && sx+x <= exS && sy+y <= eyS) {
+                g.noStroke();
+                g.fill((d&setMask[x]) == 0? #222266 : #9999bb);
+                
+                g.rect((float)(zzx + (mx+x)*zm), (float)(zzy + (my+y)*zm), sz, sz);
+                g.fill(210);
+                if (zm>5) g.stroke(34);
+                else g.noStroke();
+              } else {
+                if ((d&setMask[x]) != 0) g.rect((float)(zzx + (mx+x)*zm), (float)(zzy + (my+y)*zm), sz, sz);
+              }
             }
           }
         }

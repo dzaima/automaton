@@ -2,11 +2,19 @@ AtomicInteger askedSteps = new AtomicInteger();
 void runThread() {
   while(true) {
     long ns = nanos();
+    if (toBoard != null) {
+      board = toBoard;
+      toBoard = null;
+      playing = false;
+      doSpeedTest = false;
+      fast = false;
+      askedSteps.set(0);
+    }
     try {
       while (askedSteps.get() > 0) {
         actualStep();
         askedSteps.decrementAndGet();
-        if (askedSteps.get() > 10) askedSteps.set(10);
+        //if (askedSteps.get() > 10) askedSteps.set(10);
       }
       
       if (fast) {

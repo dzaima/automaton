@@ -65,6 +65,19 @@ void mouseActions() {
     }
     if (drawOn) board.set(px, py);
     else board.clr(px, py);
+    modified();
+    sxS = exS = syS = eyS = 0;
+  }
+  if (mousePressed && mouseButton == RIGHT && !playing) {
+    int px = (int) (mouseX/zm + dsx);
+    int py = (int) (mouseY/zm + dsy);
+    if (pmp) {
+      exS = px;
+      eyS = py;
+    } else {
+      sxS = px;
+      syS = py;
+    }
   }
 }
 void mouseWheel(MouseEvent e) {
@@ -77,8 +90,7 @@ void mouseWheel(MouseEvent e) {
 }
 boolean doSpeedTest = false;
 MainCell[] sv = new MainCell[10];
-File last;
-
+File last = new File(new JFileChooser().getFileSystemView().getDefaultDirectory().toString()+"/save.bin");
 
 
 void keyPressed(KeyEvent e) {
@@ -87,11 +99,14 @@ void keyPressed(KeyEvent e) {
     if (e.isShiftDown()) {
       sv[keyCode-'0'] = board.copy();
     } else {
-      if (sv[keyCode-'0'] != null) board = sv[keyCode-'0'].copy();
+      if (sv[keyCode-'0'] != null) toBoard = sv[keyCode-'0'].copy();
     }
   }
   if (key == 'q') {
     fast = true;
+  }
+  if (key == 'z') {
+    if (undo != null) toBoard = undo.copy();
   }
   if (key == ' ') {
     playing^= true;
@@ -126,6 +141,7 @@ void loadF(File f) {
   last = f;
   try {
     loadCB(new FileInputStream(f));
+    modified();
   } catch (FileNotFoundException e) {
     e.printStackTrace();
   }

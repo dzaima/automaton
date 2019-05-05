@@ -1,3 +1,5 @@
+import javax.swing.JFileChooser;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +14,7 @@ static {
 }
 static final int HSZ = SZ/2;
 static double dsx = HSZ, dsy = HSZ; // top left of screen; drawing start x/y
+static int sxS, syS, exS, eyS; // selection
 void setup() {
   board = new MainCell(POWER, 0, 0);
   
@@ -81,6 +84,10 @@ void setup() {
   thread("runThread");
 }
 
+MainCell undo, toBoard;
+void modified() {
+  undo = board;
+}
 
 void saveCB(OutputStream s) {
   try {
@@ -148,7 +155,8 @@ void draw() {
   text(info1, width-150, 20);
   textAlign(LEFT, BOTTOM);
   text(info3, 20, height-20);
-  text("d0c "+d0c+"   doc "+doc+"   dot "+dot + (optd0? " O" : ""), width*.4, height-20);
+  //text("d0c "+d0c+"   doc "+doc+"   dot "+dot + (optd0? " O" : ""), width*.4, height-20);
+  if (sxS != 0) text("selected: " + (exS-sxS+1) + "×" + (eyS-syS+1), width*.4, height-20);
   textAlign(RIGHT, BOTTOM);
   text(frameRate, width-20, height-20);
   pmp = mousePressed;
