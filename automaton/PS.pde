@@ -76,7 +76,20 @@ void mouseWheel(MouseEvent e) {
   dsy-= (mouseY * scalechange);
 }
 boolean doSpeedTest = false;
-void keyPressed() {
+MainCell[] sv = new MainCell[10];
+File last;
+
+
+
+void keyPressed(KeyEvent e) {
+  println(+key, keyCode);
+  if (key >= ' ' && key <= '~' && keyCode >= '0' && keyCode <= '9') {
+    if (e.isShiftDown()) {
+      sv[keyCode-'0'] = board.copy();
+    } else {
+      if (sv[keyCode-'0'] != null) board = sv[keyCode-'0'].copy();
+    }
+  }
   if (key == 'q') {
     fast = true;
   }
@@ -91,11 +104,11 @@ void keyPressed() {
     doSpeedTest = true;
     playing = false;
   }
-  if (key == 'f') {
-    saveCB("/home/dzaima/Documents/random/save.bin");
+  if (key == 19 && keyCode == 83 && e.isControlDown()) {
+    selectOutput("Choose save location", "saveF", last);
   }
-  if (key == 'o') {
-    loadCB("/home/dzaima/Documents/random/save.bin");
+  if (key == 15 && keyCode == 79 && e.isControlDown()) {
+    selectInput("Choose save location", "loadF", last);
   }
   if (key == '+') speed*= 2;
   if (key == '-') speed/= 2;
@@ -105,5 +118,25 @@ void keyPressed() {
   if (speed == 14) speed = 15;
   lns = nanos();
   println(speed);
+}
+
+
+void loadF(File f) {
+  if (f == null) return;
+  last = f;
+  try {
+    loadCB(new FileInputStream(f));
+  } catch (FileNotFoundException e) {
+    e.printStackTrace();
+  }
+}
+void saveF(File f) {
+  if (f == null) return;
+  last = f;
+  try {
+    saveCB(new FileOutputStream(f));
+  } catch (FileNotFoundException e) {
+    e.printStackTrace();
+  }
 }
 //*/

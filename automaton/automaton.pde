@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -50,12 +52,12 @@ void setup() {
   };
   btns[6] = new Button(680,20,100,100,"S") {
     public void click() {
-      saveCB("/sdcard/AllApp/s.txt");
+      saveCB(createOutput("/sdcard/AllApp/s.txt"));
     }
   };
   btns[7] = new Button(790,20,100,100,"L") {
     public void click() {
-      loadCB("/sdcard/AllApp/s.txt");
+      loadCB(createInput("/sdcard/AllApp/s.txt"));
     }
   };
   
@@ -80,8 +82,7 @@ void setup() {
 }
 
 
-void saveCB(String path) {
-  OutputStream s = createOutput(path);
+void saveCB(OutputStream s) {
   try {
     s.write(board.depth);
     board.addTo(s);
@@ -90,9 +91,8 @@ void saveCB(String path) {
     e.printStackTrace();
   }
 }
-void loadCB(String path) {
+void loadCB(InputStream s) {
   try {
-    InputStream s = createInput(path);
     MainCell c = new MainCell(s.read(), 0, 0);
     c.loadFrom(s);
     board = c;

@@ -18,6 +18,11 @@ class MainCell extends Cell {
       return n;
     }
   }
+  MainCell copy() {
+    MainCell n = new MainCell(depth, sx, sy);
+    for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(this);
+    return n;
+  }
   boolean darkO(int x, int y) {
     if (x < sx | y < sy | x >= sx+sz | y >= sy+sz) return false;
     return dark(x, y);

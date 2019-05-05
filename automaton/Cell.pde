@@ -18,6 +18,8 @@ static class Cell {
   static int[] clrMask = new int[32];
   static int[] horizScores = new int[32];
   static int[] popc5 = new int[32];
+  static int[] bufS = new int[32];
+  static int[] bufC = new int[32];
   static {
     for (int i = 0; i < 32; i++) {
       setMask[i] =   1<<i;
@@ -83,7 +85,15 @@ static class Cell {
       data[cy]&= clrMask[cx];
     }
   }
-  
+  Cell copy(Cell np) {
+    Cell n = new Cell(depth, sx, sy, np);
+    if (depth > 0) {
+      for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(this);
+    } else {
+      for (int y = 0; y < 32; y++) n.data[y] = data[y];
+    }
+    return n;
+  }
   boolean get(int x, int y) {
     if (depth > 0) {
       int cx = (x-sx) / ssz;
@@ -112,20 +122,43 @@ static class Cell {
         if (fln2==0 & fln3==0 & fln4==0) continue;
         int fln1 = data[y-2];
         int fln5 = data[y+2];
-        for (int x = 2; x < 30; x++) {
-          int ln1 = (fln1 >> (x-2)) & 31;
-          int ln2 = (fln2 >> (x-2)) & 31;
-          int ln3 = (fln3 >> (x-2)) & 31;
-          int ln4 = (fln4 >> (x-2)) & 31;
-          int ln5 = (fln5 >> (x-2)) & 31;
+        for (int x = 0; x < 28; x++) {
+          int ln1 = fln1 & 31; fln1>>=1;
+          int ln2 = fln2 & 31; fln2>>=1;
+          int ln3 = fln3 & 31; fln3>>=1;
+          int ln4 = fln4 & 31; fln4>>=1;
+          int ln5 = fln5 & 31; fln5>>=1;
           int ox = horizScores[ln1] + horizScores[ln2] + horizScores[ln3] + horizScores[ln4] + horizScores[ln5];
           int oy = popc5[ln1] - popc5[ln2] + popc5[ln4] - popc5[ln5];
-          //int oy = -2*Integer.bitCount(ln1) - Integer.bitCount(ln2) + Integer.bitCount(ln4) + 2*Integer.bitCount(ln5);
-          int fx = 1 - (ox+16)%3 + x;
+          //int oy = Integer.bitCount(ln1) - Integer.bitCount(ln2) + Integer.bitCount(ln4) - Integer.bitCount(ln5);
+          int fx = 1 - (ox+16)%3 + x + 2;
           int fy = 1 - (oy+16)%3 + y;
-          if ((data[fy]&setMask[fx]) != 0) n.data[y]|= setMask[x];
+          if ((data[fy]&setMask[fx]) != 0) n.data[y]|= setMask[x+2];
         }
       }
+      //for (int x = 2; x < 30; x++) { // don't try this. it's 4x slower ._.
+      //  int ux = x-2;
+      //  int ox = 16;
+      //  int ln1 = (data[0]>>ux) & 31; ox+= bufS[0] = horizScores[ln1]; bufC[0] = popc5[ln1];
+      //  int ln2 = (data[1]>>ux) & 31; ox+= bufS[1] = horizScores[ln2]; bufC[1] = popc5[ln2];
+      //  int ln3 = (data[2]>>ux) & 31; ox+= bufS[2] = horizScores[ln3]; bufC[2] = popc5[ln3];
+      //  int ln4 = (data[3]>>ux) & 31; ox+= bufS[3] = horizScores[ln4]; bufC[3] = popc5[ln4];
+      //  int ln5 = (data[4]>>ux) & 31; ox+= bufS[4] = horizScores[ln5]; bufC[4] = popc5[ln5];
+      //  int y = 2;
+      //  while (true) {
+      //    int oy = bufC[y-2] - bufC[y-1] + bufC[y+1] - bufC[y+2];
+      //    int fx = 1 - ox%3 + x;
+      //    int fy = 1 - (oy+16)%3 + y;
+      //    if ((data[fy]&setMask[fx]) != 0) n.data[y]|= setMask[x];
+          
+      //    if (y > 28) break;
+      //    ox-= bufS[y-2];
+      //    y++;
+      //    int lnn = (data[y+2]>>ux) & 31;
+      //    bufC[y+2] = popc5[lnn];
+      //    ox+= bufS[y+2] = horizScores[lnn];
+      //  }
+      //}
       avgs[0]+= System.nanoTime() - S;
       
       // top/bottom
@@ -461,9 +494,9 @@ static class Pos {
 
 
 static class ECell extends Cell {
-  public static final ECell[] cache = new ECell[10];
+  public static final ECell[] cache = new ECell[POWER];
   static {
-    for(int i = 0; i < 10; i++) cache[i] = new ECell(i);
+    for(int i = 0; i < POWER; i++) cache[i] = new ECell(i);
   }
   private ECell(int depth) {
     super(depth);
@@ -508,5 +541,8 @@ static class ECell extends Cell {
     } catch(Exception e) {
       e.printStackTrace();
     }
+  }
+  Cell copy(Cell np) {
+    return this;
   }
 }
