@@ -48,8 +48,9 @@ String getRLE(MainCell c) {
 }
 
 MainCell loadRLE(String s) {
-  while (!s.startsWith("x")) s = s.substring(s.indexOf("\n")+1);
+  while (!s.startsWith("x") && s.contains("\n")) s = s.substring(s.indexOf("\n")+1);
   s = s.substring(s.indexOf("\n")+1);
+  if (s.length() == 0) return null;
   String[] lns = s.split("\\$");
   ArrayList<Integer>[] parsed = new ArrayList[lns.length];
   int min = Integer.MAX_VALUE;
@@ -76,11 +77,9 @@ MainCell loadRLE(String s) {
     for (int j = 0; j < a.size(); j++) sum+= a.get(j);
     if (a.size() > 0) min = min(min, a.get(0));
     max = max(max, sum);
-    println(a);
   }
   MainCell c = new MainCell(POWER, 0, 0);
   int w = max - min;
-  println(min, max, w);
   int h = parsed.length;
   for (int i = 0; i < parsed.length; i++) {
     ArrayList<Integer> a = parsed[i];
