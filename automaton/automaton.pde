@@ -1,3 +1,5 @@
+import java.awt.datatransfer.DataFlavor;
+import java.awt.Toolkit;
 import javax.swing.JFileChooser;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

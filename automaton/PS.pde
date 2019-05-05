@@ -45,6 +45,9 @@ void mouseActions() {
   }
   if (touches.length != 2) fullow = 0;
 }
+String getClip() {
+  TODO
+}
 /*/
 automaton thisa = this;
 void settings() {
@@ -112,13 +115,12 @@ void keyPressed(KeyEvent e) {
     playing^= true;
   }
   if (key == 'f') {
-    RLE r = new RLE();
-    int maxY = board.maxY();
-    for (int y = board.minY(); y < maxY; y++) {
-      board.writeRle(r, y);
-      r.ln();
-    }
-    saveStrings("f.rle", new String[]{"x = 0, y = 0", r.res.toString()});
+    saveStrings("f.rle", new String[]{"x = 0, y = 0", getRLE(board)});
+  }
+  if (key == 'r') {
+    String s = getClip();
+    MainCell c = loadRLE(s);
+    if (c != null) board = c;
   }
   if (key == 's') {
     playing = false;
@@ -144,6 +146,14 @@ void keyPressed(KeyEvent e) {
   println(speed);
 }
 
+String getClip() {
+  try {
+    return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+  } catch (Throwable e) {
+    e.printStackTrace();
+    return "";
+  }
+}
 
 void loadF(File f) {
   if (f == null) return;
