@@ -111,6 +111,15 @@ void keyPressed(KeyEvent e) {
   if (key == ' ') {
     playing^= true;
   }
+  if (key == 'f') {
+    RLE r = new RLE();
+    int maxY = board.maxY();
+    for (int y = board.minY(); y < maxY; y++) {
+      board.writeRle(r, y);
+      r.ln();
+    }
+    saveStrings("f.rle", new String[]{"x = 0, y = 0", r.res.toString()});
+  }
   if (key == 's') {
     playing = false;
     step();

@@ -3,7 +3,7 @@ static class Cell {
   static final int sam = sw*sw; // sub amount
   static final int[] bad = {0, 1, 30, 31}; 
   final int depth; // 0 - int[]; 1+ - rec
-  final int sx, sy;
+  final int sx, sy; // global position
   int sz, ssz;
   final Cell[] sc; // subcells
   final Cell p;
@@ -485,6 +485,36 @@ static class Cell {
       return false;
     }
   }
+  int minY() {
+    if (depth == 0) return sy;
+    int min = Integer.MAX_VALUE;
+    for (Cell c : sc) {
+      min = min(min, c.minY());
+    }
+    return min;
+  }
+  int maxY() {
+    if (depth == 0) return sy+sz;
+    int max = Integer.MIN_VALUE;
+    for (Cell c : sc) {
+      max = max(max, c.maxY());
+    }
+    return max;
+  }
+  void writeRle(RLE r, int y) {
+    if (depth == 0) {
+      int c = data[y-sy];
+      for (int i = 0; i < 32; i++) {
+        if ((c&1)==1) r.on(1);
+        else r.off(1);
+        c>>=1;
+      }
+    } else {
+      for (int x = 0; x < sw; x++) {
+        sc[x + sw*((y-sy)*sw/sz)].writeRle(r, y);
+      }
+    }
+  }
 }
 
 static class Pos {
@@ -554,5 +584,14 @@ static class ECell extends Cell {
   }
   Cell copy(Cell np) {
     return this;
+  }
+  int minY() {
+    return Integer.MAX_VALUE;
+  }
+  int maxY() {
+    return Integer.MIN_VALUE;
+  }
+  void writeRle(RLE r, int y) {
+    r.off(sz);
   }
 }
