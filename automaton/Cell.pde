@@ -12,14 +12,18 @@ static class Cell {
   static int[] lm = new int[36];
   static int[] rm = new int[36];
   
-  static int[] setMask = new int[32];
-  static int[] set4Mask = new int[]{0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000};
-  static int[] set8Mask = new int[]{0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000};
-  static int[] clrMask = new int[32];
-  static int[] horizScores = new int[32];
-  static int[] popc5 = new int[32];
+
   static int[] bufS = new int[32];
   static int[] bufC = new int[32];
+  
+  static int[] set4Mask = new int[]{0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000};
+  static int[] set8Mask = new int[]{0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000};
+  
+  static int[] setMask = new int[32];
+  static int[] clrMask = new int[32];
+  
+  static int[] horizScores = new int[32];
+  static int[] popc5 = new int[32];
   static {
     for (int i = 0; i < 32; i++) {
       setMask[i] =   1<<i;
@@ -88,7 +92,7 @@ static class Cell {
   Cell copy(Cell np) {
     Cell n = new Cell(depth, sx, sy, np);
     if (depth > 0) {
-      for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(this);
+      for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(n);
     } else {
       for (int y = 0; y < 32; y++) n.data[y] = data[y];
     }

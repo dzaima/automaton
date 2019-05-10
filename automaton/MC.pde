@@ -20,7 +20,7 @@ class MainCell extends Cell {
   }
   MainCell copy() {
     MainCell n = new MainCell(depth, sx, sy);
-    for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(this);
+    for (int i = 0; i < sam; i++) n.sc[i] = sc[i].copy(n);
     return n;
   }
   boolean darkO(int x, int y) {
