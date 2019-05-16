@@ -9,11 +9,11 @@ boolean[][] step(boolean[][] map, boolean vf) {
       int sx = 0;
       int sy = 0;
       
-      for (int cy = -2; cy <= 2; cy++) {
+      for (int cy = -R; cy <= R; cy++) {
         int ry = y+cy;
         if (ry <  0) ry+= sz;
         if (ry >=sz) ry-= sz;
-        for (int cx = -2; cx <= 2; cx++) {
+        for (int cx = -R; cx <= R; cx++) {
           int rx = x+cx;
           if (rx <  0) rx+= sz;
           if (rx >=sz) rx-= sz;
@@ -23,8 +23,8 @@ boolean[][] step(boolean[][] map, boolean vf) {
           }
         }
       }
-      int fx = 1 - (sx+16)%3 + x;
-      int fy = 1 - (sy+16)%3 + y;
+      int fx = 1 - Math.floorMod(sx+1,3) + x;
+      int fy = 1 - Math.floorMod(sy+1,3) + y;
       
       if (vf) {
         int fxm = fx;

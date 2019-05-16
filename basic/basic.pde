@@ -3,11 +3,12 @@ boolean[][] peek;
 boolean[][] undo;
 boolean[][][] saves;
 int sz, csz;
+final int R = 3;
 void setup() {
   size(800,800);
   saves = new boolean[10][][];
   sz = 40;
-  csz = 20;
+  csz = width/sz;
   map = new boolean[sz][sz];
 }
 int lmx, lmy;
@@ -57,11 +58,11 @@ void draw() {
   if (highlight) {
     int sx = 0;
     int sy = 0;
-    for (int cy = -2; cy <= 2; cy++) {
+    for (int cy = -R; cy <= R; cy++) {
       int ry = my+cy;
       if (ry <  0) ry+= sz;
       if (ry >=sz) ry-= sz;
-      for (int cx = -2; cx <= 2; cx++) {
+      for (int cx = -R; cx <= R; cx++) {
         int rx = mx+cx;
         if (rx <  0) rx+= sz;
         if (rx >=sz) rx-= sz;
@@ -71,10 +72,10 @@ void draw() {
         }
       }
     }
-    int fx = 1 - (sx+16)%3 + mx;
+    int fx = 1 - Math.floorMod(sx+1, 3) + mx;
     if (fx <  0) fx+= sz;
     if (fx >=sz) fx-= sz;
-    int fy = 1 - (sy+16)%3 + my;
+    int fy = 1 - Math.floorMod(sy+1, 3) + my;
     if (fy <  0) fy+= sz;
     if (fy >=sz) fy-= sz;
     fill(0x660000ff);
